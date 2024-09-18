@@ -13,9 +13,16 @@ ORB_var orb;
 
 int main (int argc, char* argv[])
 {
-    if (argc < 2) {
+    if (argc < 2) 
+    {
         cerr << "USO: " << argv[0] << " <nome_do_servidor>\n";
         return 1;
+    }
+
+    if (argc > 2)
+    {
+        cerr << "USO: " << argv[0] << " <nome_do_servidor>   ~// e nada posterior //~\n";
+        return 2;
     }
 
     try

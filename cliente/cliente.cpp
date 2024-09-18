@@ -12,10 +12,18 @@ ORB_var orb;
 
 int main (int argc, char* argv[])
 {
-    if (argc < 2) {
+    if (argc < 2) 
+    {
         cerr << "USO: " << argv[0] << " <nome_do_servidor>\n";
         return 1;
     }
+
+    if (argc > 2)
+    {
+        cerr << "USO: " << argv[0] << " <nome_do_servidor>   ~// e nada posterior //~\n";
+        return 2;
+    }
+
 
     try
     {
@@ -31,47 +39,71 @@ int main (int argc, char* argv[])
         temp = ns->resolve(nome);
         CEtcd_var conta = CEtcd::_narrow(temp);
 
-        string chave, valor;
+        string chave, valor, valorRecuperado;
+        int carrousel = 1;
+        Boolean cadastrada;
 
-        cout<< "Digite a chave: ";
-        cin >> chave;
+        cout << "O que voce deseja fazer?\n";
 
-        cout<< "Digite a valor: ";
-        cin >> valor;
+        while (carrousel != 0)
+        {
+            cout << "\n~/~/~/~/~/~/~/~/~/~/~/~/~\n\n";
+            cout << "1.Adicionar valor a uma chave na tabela.\n";
+            cout << "2.Procurar por chave e retornar valor.\n";
+            cout << "3.Deletar chave e valor da tabela.\n";
+            cout << "0.Para sair da aplicacao.\n";
+            cin >> carrousel;
 
-        Boolean cadastrada = conta->put(chave, valor);
-        if (cadastrada)
-        {
-            cout << "chave nova cadastrada\n";
-        } 
-        else
-        {
-            cout << "chave  existente, valor alterado\n";
-        }
+            switch (carrousel)
+            {
+            case 1:
+                cout<< "Digite a chave: "; cin >> chave;
+                cout<< "Digite a valor: "; cin >> valor;
 
-        try
-        {
-            cout << "chave que quer buscar: ";
-            cin >> chave;
-            string valorRecuperado = conta->get(chave);
-            cout << "valor encontrado: " << valorRecuperado << endl;
-        }
-        catch(const InvalidKey& e)
-        {
-            cerr << "InvalidKey exception: " << e._name() << endl;
-        }
-        
-        try
-        {
-            cout << "chave para deletar: ";
-            cin >> chave;
-            conta->del(chave);
-            cout << "chave deletada\n";
-        }
-        catch(const InvalidKey& e)
-        {
-            cerr << "InvalidKey exception: " << e._name() << endl;
-        }
+                cadastrada = conta->put(chave, valor);
+                if (cadastrada)
+                {
+                    cout << "chave nova cadastrada\n";
+                } 
+                else
+                {
+                    cout << "chave  existente, valor alterado\n";
+                }
+                break;
+            
+            case 2:
+                try
+                {
+                    cout << "chave a ser procurada: ";
+                    cin >> chave;
+                    valorRecuperado = conta->get(chave);
+                    cout << "valor encontrado: " << valorRecuperado << endl;
+                }
+                catch(const InvalidKey& e)
+                {
+                    cerr << "InvalidKey exception: " << e._name() << endl;
+                }
+                break;
+
+            case 3:
+                try
+                {
+                    cout << "chave para deletar: ";
+                    cin >> chave;
+                    conta->del(chave);
+                    cout << "chave deletada\n";
+                }
+                catch(const InvalidKey& e)
+                {
+                    cerr << "InvalidKey exception: " << e._name() << endl;
+                }
+                break;
+
+            default:
+                cout << "Escolha uma das opcoes existentes\n";
+                break;
+            };
+        };
 
         orb->destroy();
     }
